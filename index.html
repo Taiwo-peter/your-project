@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcendence: Monolithic to Microservices Migration</title>
+    <meta name="description" content="Complete documentation of ft_transcendence project transformation from monolithic to microservices architecture with Azure deployment, CI/CD pipeline, and comprehensive security measures.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.5);
+        }
+
+        pre {
+            font-family: 'JetBrains Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 0.875em;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+        }
+
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-white">
+    <!-- Navigation -->
+    <header class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-full px-4 lg:px-6">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="text-2xl font-bold text-gray-900">42</div>
+                    <div class="hidden md:block h-6 w-px bg-gray-300"></div>
+                    <h1 class="hidden md:block text-lg font-semibold text-gray-900">
+                        Transcendence Migration Guide
+                    </h1>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#overview" class="text-gray-600 hover:text-blue-600 transition-colors">Overview</a>
+                    <a href="#architecture" class="text-gray-600 hover:text-blue-600 transition-colors">Architecture</a>
+                    <a href="#azure-setup" class="text-gray-600 hover:text-blue-600 transition-colors">Deployment</a>
+                    <a href="#debugging" class="text-gray-600 hover:text-blue-600 transition-colors">Debugging</a>
+                </nav>
+                
+                <button id="mobile-menu-toggle" class="md:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <div class="px-4 py-2 space-y-2">
+                <a href="#overview" class="block w-full text-left py-2 text-gray-600 hover:text-blue-600">Overview</a>
+                <a href="#architecture" class="block w-full text-left py-2 text-gray-600 hover:text-blue-600">Architecture</a>
+                <a href="#azure-setup" class="block w-full text-left py-2 text-gray-600 hover:text-blue-600">Deployment</a>
+                <a href="#debugging" class="block w-full text-left py-2 text-gray-600 hover:text-blue-600">Debugging</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="hidden lg:flex lg:flex-shrink-0">
+            <div class="flex flex-col w-80 border-r border-gray-200 bg-gray-50">
+                <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+                    <nav class="mt-5 px-3 space-y-1">
+                        <div class="space-y-3">
+                            <div>
+                                <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Getting Started</h3>
+                                <div class="mt-2 space-y-1">
+                                    <a href="#overview" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">Project Overview</a>
+                                    <a href="#architecture" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">Architecture Transformation</a>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Infrastructure</h3>
+                                <div class="mt-2 space-y-1">
+                                    <a href="#azure-setup" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">Azure Cloud Setup</a>
+                                    <a href="#github-actions" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">GitHub Actions CI/CD</a>
+                                    <a href="#runners" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">Self-Hosted Runners</a>
+                                    <a href="#secrets" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">Secrets Management</a>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Networking & Security</h3>
+                                <div class="mt-2 space-y-1">
+                                    <a href="#dns-cloudflare" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">DNS & Cloudflare</a>
+                                    <a href="#ssl-nginx" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">SSL & Nginx</a>
+                                    <a href="#waf-security" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">WAF & Security Rules</a>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Operations</h3>
+                                <div class="mt-2 space-y-1">
+                                    <a href="#containers" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">Container Management</a>
+                                    <a href="#debugging" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">Debugging Process</a>
+                                    <a href="#database" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">Database Dependencies</a>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Application</h3>
+                                <div class="mt-2 space-y-1">
+                                    <a href="#game-app" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">Game Application</a>
+                                    <a href="#authentication" class="group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full text-left text-gray-600 hover:bg-white hover:text-gray-900">Authentication & 2FA</a>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="flex-1 relative z-0 focus:outline-none">
+            <div class="py-6">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                    
+                    <!-- Project Overview Section -->
+                    <section id="overview" class="mb-16">
+                        <div class="mb-8">
+                            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                                Transcendence: Monolithic to Microservices Migration
+                            </h1>
+                            <p class="text-xl text-gray-600">
+                                Complete documentation of our architectural transformation journey from a monolithic application 
+                                to a distributed microservices architecture deployed on Azure Cloud.
+                            </p>
+                        </div>
+
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+                            <div class="flex items-start space-x-3">
+                                <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <h3 class="text-lg font-medium text-blue-900 mb-2">Project Summary</h3>
+                                    <p class="text-blue-800">
+                                        This documentation covers the complete migration of Transcendence, a competitive gaming platform, 
+                                        from a monolithic architecture to a modern microservices setup utilizing Azure cloud infrastructure, 
+                                        GitHub Actions for CI/CD, and comprehensive security measures including Cloudflare WAF.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow">
+                                <div class="flex items-center space-x-3 mb-4">
+                                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"></path>
+                                    </svg>
+                                    <h3 class="text-lg font-medium">Architecture</h3>
+                                </div>
+                                <p class="text-gray-600">
+                                    Transformed from monolithic to microservices with API Gateway, Frontend, and Backend services.
+                                </p>
+                            </div>
+
+                            <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow">
+                                <div class="flex items-center space-x-3 mb-4">
+                                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <h3 class="text-lg font-medium">Deployment</h3>
+                                </div>
+                                <p class="text-gray-600">
+                                    Automated CI/CD pipeline using GitHub Actions with self-hosted runners on Azure VMs.
+                                </p>
+                            </div>
+
+                            <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow">
+                                <div class="flex items-center space-x-3 mb-4">
+                                    <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                    </svg>
+                                    <h3 class="text-lg font-medium">Security</h3>
+                                </div>
+                                <p class="text-gray-600">
+                                    Comprehensive security with Cloudflare WAF, SSL/TLS encryption, and geo-blocking.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Architecture Transformation Section -->
+                    <section id="architecture" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Architecture Transformation</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">Complete Architectural Overview</h3>
+                            
+                            <div class="mb-6">
+                                <video 
+                                    controls 
+                                    autoplay
+                                    loop
+                                    muted
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                    style="max-height: 500px;"
+                                >
+                                    <source src="attached_assets/Architectural Display.mp4" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Architectural display video walkthrough explaining the complete microservices transformation process and deployment strategy.
+                                </p>
+                            </div>
+                            
+                            <h3 class="text-xl font-semibold mb-4">From Monolithic to Microservices</h3>
+                            <p class="text-gray-600 mb-6">
+                                The Transcendence application was successfully migrated from a traditional monolithic architecture 
+                                to a modern microservices setup, enabling better scalability, maintainability, and deployment flexibility.
+                            </p>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div>
+                                    <h4 class="text-lg font-medium mb-3">Before: Monolithic Architecture</h4>
+                                    <ul class="space-y-2 text-gray-600">
+                                        <li class="flex items-start space-x-2">
+                                            <span class="text-red-500 mt-1">•</span>
+                                            <span>Single deployable unit containing all functionality</span>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="text-red-500 mt-1">•</span>
+                                            <span>Tight coupling between components</span>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="text-red-500 mt-1">•</span>
+                                            <span>Difficult to scale individual components</span>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <span class="text-red-500 mt-1">•</span>
+                                            <span>Single point of failure</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="text-lg font-medium mb-3">After: Microservices Architecture</h4>
+                                    <ul class="space-y-2 text-gray-600">
+                                        <li class="flex items-start space-x-2">
+                                            <svg class="w-4 h-4 text-green-500 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span>Separate services: Frontend, API Gateway, Backend</span>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <svg class="w-4 h-4 text-green-500 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span>Loose coupling with clear service boundaries</span>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <svg class="w-4 h-4 text-green-500 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span>Independent scaling and deployment</span>
+                                        </li>
+                                        <li class="flex items-start space-x-2">
+                                            <svg class="w-4 h-4 text-green-500 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span>Fault isolation and resilience</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow">
+                            <h3 class="text-xl font-semibold mb-4">Service Communication Flow</h3>
+                            <p class="text-gray-600 mb-4">
+                                The microservices architecture implements a clear communication pattern ensuring security 
+                                and proper separation of concerns:
+                            </p>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <code class="text-sm font-mono">
+                                    Frontend → API Gateway → Backend Service → PostgreSQL Database
+                                </code>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="border-l-4 border-blue-500 pl-4">
+                                    <h4 class="font-medium">Frontend Service</h4>
+                                    <p class="text-gray-600 text-sm">React-based user interface that only communicates with the API Gateway</p>
+                                </div>
+                                <div class="border-l-4 border-green-500 pl-4">
+                                    <h4 class="font-medium">API Gateway</h4>
+                                    <p class="text-gray-600 text-sm">Central entry point that routes requests to appropriate backend services</p>
+                                </div>
+                                <div class="border-l-4 border-purple-500 pl-4">
+                                    <h4 class="font-medium">Backend Service</h4>
+                                    <p class="text-gray-600 text-sm">Core business logic that only accepts requests from API Gateway</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Azure Cloud Setup Section -->
+                    <section id="azure-setup" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Azure Cloud Infrastructure</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">Azure Cloud Resources</h3>
+                            
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/Microsoft AZURE CLOUD RESOURCES.png" 
+                                    alt="Microsoft Azure Cloud Resources Dashboard" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Complete Azure resource group showing all virtual machines, network security groups, SSH keys, and disk storage for the microservices deployment.
+                                </p>
+                            </div>
+
+                            <h3 class="text-xl font-semibold mb-4">Virtual Machine Configuration</h3>
+                            
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/VM on AZURE.png" 
+                                    alt="Azure Virtual Machine Management Interface" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Azure VM management showing the running Linux virtual machines for our microservices deployment.
+                                </p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="font-medium mb-2">APIGATEWAY-VM</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Linux Ubuntu</li>
+                                        <li>• Standard_B1s</li>
+                                        <li>• UK West Region</li>
+                                        <li>• Self-hosted Runner</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="font-medium mb-2">BACKEND-VM</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Linux Ubuntu</li>
+                                        <li>• Standard_B1s</li>
+                                        <li>• UK West Region</li>
+                                        <li>• Self-hosted Runner</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="font-medium mb-2">FRONTEND-VM</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Linux Ubuntu</li>
+                                        <li>• Standard_B1s</li>
+                                        <li>• UK West Region</li>
+                                        <li>• GitHub Actions Runner</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow">
+                            <h3 class="text-xl font-semibold mb-4">Container Registry (ACR)</h3>
+                            <p class="text-gray-600 mb-4">
+                                All Docker images are stored in the <code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">kodmicroservices</code> Azure Container Registry for efficient deployment and version management.
+                            </p>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <pre class="text-sm"><code># Container images stored in ACR
+kodmicroservices.azurecr.io/frontend:latest
+kodmicroservices.azurecr.io/apigateway:latest
+kodmicroservices.azurecr.io/backend:latest</code></pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- GitHub Actions CI/CD Section -->
+                    <section id="github-actions" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">GitHub Actions CI/CD Pipeline</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">CI/CD Pipeline Configuration</h3>
+                            
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/CICD PIPELINE.png" 
+                                    alt="CI/CD Pipeline YAML Configuration" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    GitHub Actions workflow YAML configuration showing the automated CI/CD pipeline for microservice architecture deployment.
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/GIT ACTIONS DEPLOYMENT.png" 
+                                    alt="GitHub Actions Deployment Pipeline" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Successful deployment pipeline execution showing all four stages: Build and Push Docker Images, Deploy Backend to EC2, Deploy API Gateway to EC2, and Deploy Frontend to EC2.
+                                </p>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <h4 class="text-lg font-medium mb-3">Pipeline Stages</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                                            <span class="text-white font-bold text-sm">1</span>
+                                        </div>
+                                        <h5 class="font-medium text-green-900">Build and Push Docker Images</h5>
+                                        <p class="text-sm text-green-700 mt-1">1h 35m</p>
+                                    </div>
+                                    
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                                            <span class="text-white font-bold text-sm">2</span>
+                                        </div>
+                                        <h5 class="font-medium text-blue-900">Deploy Backend to EC2</h5>
+                                        <p class="text-sm text-blue-700 mt-1">2m 20s</p>
+                                    </div>
+                                    
+                                    <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
+                                        <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                                            <span class="text-white font-bold text-sm">3</span>
+                                        </div>
+                                        <h5 class="font-medium text-purple-900">Deploy API Gateway to EC2</h5>
+                                        <p class="text-sm text-purple-700 mt-1">1m 16s</p>
+                                    </div>
+                                    
+                                    <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 text-center">
+                                        <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                                            <span class="text-white font-bold text-sm">4</span>
+                                        </div>
+                                        <h5 class="font-medium text-orange-900">Deploy Frontend to EC2</h5>
+                                        <p class="text-sm text-orange-700 mt-1">55s</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Self-Hosted Runners Section -->
+                    <section id="runners" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Self-Hosted Runners</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">GitHub Runners Configuration</h3>
+                            
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/GITHUB RUNNERS.png" 
+                                    alt="GitHub Self-Hosted Runners Configuration" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    GitHub repository showing configured self-hosted runners for API Gateway and Backend services running on Azure virtual machines.
+                                </p>
+                            </div>
+
+                            <p class="text-gray-600 mb-6">
+                                Self-hosted runners provide secure, dedicated compute resources for building and deploying 
+                                microservices directly on Azure infrastructure, enabling faster builds and enhanced security control.
+                            </p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="font-medium mb-3">API Gateway Runners</h4>
+                                    <ul class="text-sm text-gray-600 space-y-2">
+                                        <li>• <strong>apigateway:</strong> Self-hosted, Linux X64</li>
+                                        <li>• <strong>apigatewayrunnersAZ:</strong> Self-hosted, Linux X64</li>
+                                        <li>• <strong>jaiye-apigateway-runner:</strong> Self-hosted, Linux X64 (Idle)</li>
+                                        <li>• Direct deployment to Azure VM</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="font-medium mb-3">Backend Runners</h4>
+                                    <ul class="text-sm text-gray-600 space-y-2">
+                                        <li>• <strong>backend:</strong> Self-hosted, Linux X64</li>
+                                        <li>• <strong>backend-runner:</strong> Self-hosted, Linux X64</li>
+                                        <li>• <strong>backendrunnerAZ:</strong> Self-hosted, Linux X64</li>
+                                        <li>• <strong>jaiye-backend-runner:</strong> Self-hosted, Linux X64 (Idle)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Secrets Management Section -->
+                    <section id="secrets" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Secrets Management</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">GitHub Repository Secrets</h3>
+                            
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/Git Actions and Variables.png" 
+                                    alt="GitHub Actions Repository Secrets Configuration" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Comprehensive secrets management showing Azure credentials, environment files, and ACR registry access tokens stored securely in GitHub repository secrets.
+                                </p>
+                            </div>
+
+                            <p class="text-gray-600 mb-6">
+                                All sensitive configuration data is stored as encrypted secrets in GitHub, ensuring secure 
+                                access to Azure resources, container registries, and environment-specific configurations.
+                            </p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h4 class="font-medium mb-3">Azure Integration Secrets</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• AZURE_TEENAT_CONTAINER_REGISTRY</li>
+                                        <li>• AZURE_TEENAT_CREDENTIALS</li>
+                                        <li>• AZURE_TEENAT_RESOURCE_GROUP</li>
+                                        <li>• AWS_ACCESS_KEY_ID</li>
+                                        <li>• AWS_SECRET_ACCESS_KEY</li>
+                                        <li>• AWS_REGION</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-medium mb-3">Application Secrets</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• APIGATEWAY_ENV_FILE</li>
+                                        <li>• BACKEND_ENV_FILE</li>
+                                        <li>• BACK_ENV_FILE</li>
+                                        <li>• APIG_ENV_FILE</li>
+                                        <li>• ECR_REGISTRY</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- DNS and Cloudflare Section -->
+                    <section id="dns-cloudflare" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">DNS & Cloudflare Configuration</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">Domain Management Setup</h3>
+                            
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/DNS NAMECHEAP.png" 
+                                    alt="Namecheap Domain Configuration" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Namecheap domain management for taiwofaladeprojects.xyz showing domain status, DNS configuration, and Cloudflare nameserver integration.
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/DNS CLOUDFLARE.png" 
+                                    alt="Cloudflare DNS Records Configuration" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Cloudflare DNS management showing A, AAAA, and CNAME record configuration for routing traffic to Azure infrastructure.
+                                </p>
+                            </div>
+
+                            <p class="text-gray-600 mb-6">
+                                The domain infrastructure uses Namecheap for domain registration and Cloudflare for DNS management, 
+                                providing global CDN capabilities, DDoS protection, and advanced security features.
+                            </p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-blue-50 rounded-lg p-4">
+                                    <h4 class="font-medium text-blue-900 mb-3">Namecheap Configuration</h4>
+                                    <ul class="text-blue-800 text-sm space-y-1">
+                                        <li>• Domain: taiwofaladeprojects.xyz</li>
+                                        <li>• Status: Active (Auto-renew enabled)</li>
+                                        <li>• WhoisGuard: Privacy protection enabled</li>
+                                        <li>• Custom DNS: Cloudflare nameservers</li>
+                                        <li>• SSL Certificates: Managed externally</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-orange-50 rounded-lg p-4">
+                                    <h4 class="font-medium text-orange-900 mb-3">Cloudflare Features</h4>
+                                    <ul class="text-orange-800 text-sm space-y-1">
+                                        <li>• Global CDN network</li>
+                                        <li>• DNS management with import/export</li>
+                                        <li>• DDoS protection</li>
+                                        <li>• Web Application Firewall</li>
+                                        <li>• SSL/TLS encryption</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- WAF and Security Section -->
+                    <section id="waf-security" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Web Application Firewall & Security</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">Cloudflare WAF Configuration</h3>
+                            
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/WAF CLOUDFLARE.png" 
+                                    alt="Cloudflare WAF Security Rules Configuration" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Cloudflare Web Application Firewall showing active security rule blocking incoming traffic from Nigeria for enhanced protection.
+                                </p>
+                            </div>
+
+                            <p class="text-gray-600 mb-6">
+                                The Web Application Firewall provides comprehensive protection against various attacks including DDoS, 
+                                SQL injection, XSS, and geographic restrictions based on business requirements.
+                            </p>
+
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                                <h4 class="font-medium text-red-900 mb-3">Geographic Blocking</h4>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-red-800 font-medium">Block Incoming Traffic from Nigeria</span>
+                                        <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">Active</span>
+                                    </div>
+                                    <div class="text-red-700 text-sm">
+                                        <p><strong>Rule:</strong> Country equals NG → Block</p>
+                                        <p><strong>Events (24h):</strong> 2 blocked requests</p>
+                                        <p><strong>Action:</strong> Connection terminated before reaching origin server</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                    <h5 class="font-medium text-green-900 mb-2">DDoS Protection</h5>
+                                    <ul class="text-green-800 text-sm space-y-1">
+                                        <li>• Layer 3/4 protection</li>
+                                        <li>• Application layer filtering</li>
+                                        <li>• Rate limiting</li>
+                                        <li>• Bot management</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <h5 class="font-medium text-blue-900 mb-2">OWASP Protection</h5>
+                                    <ul class="text-blue-800 text-sm space-y-1">
+                                        <li>• SQL injection prevention</li>
+                                        <li>• XSS attack blocking</li>
+                                        <li>• CSRF protection</li>
+                                        <li>• Command injection filtering</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                    <h5 class="font-medium text-purple-900 mb-2">Custom Rules</h5>
+                                    <ul class="text-purple-800 text-sm space-y-1">
+                                        <li>• Geographic restrictions</li>
+                                        <li>• IP whitelisting/blacklisting</li>
+                                        <li>• User agent filtering</li>
+                                        <li>• Request pattern matching</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SSL and Nginx Section -->
+                    <section id="ssl-nginx" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">SSL/TLS Configuration with Let's Encrypt</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">Nginx SSL Implementation</h3>
+                            <p class="text-gray-600 mb-6">
+                                The frontend service uses Nginx as a reverse proxy server with SSL/TLS encryption provided by 
+                                Let's Encrypt certificates for secure HTTPS communication.
+                            </p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-green-900 mb-3">Let's Encrypt Benefits</h4>
+                                    <ul class="space-y-2 text-green-800 text-sm">
+                                        <li>• Free SSL/TLS certificates</li>
+                                        <li>• Automated certificate renewal</li>
+                                        <li>• Domain validation</li>
+                                        <li>• Browser trust and compatibility</li>
+                                        <li>• 90-day certificate lifecycle</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-blue-900 mb-3">Nginx Configuration</h4>
+                                    <ul class="space-y-2 text-blue-800 text-sm">
+                                        <li>• HTTP to HTTPS redirect</li>
+                                        <li>• SSL certificate management</li>
+                                        <li>• Static file serving</li>
+                                        <li>• Proxy pass to backend services</li>
+                                        <li>• Security headers implementation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow">
+                            <h3 class="text-xl font-semibold mb-4">SSL Virtual Host Configuration</h3>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <pre class="text-sm"><code>server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
+    
+    # Redirect HTTP to HTTPS
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com www.yourdomain.com;
+    
+    # SSL Configuration
+    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+    
+    # SSL Security Headers
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512;
+    ssl_prefer_server_ciphers off;
+    
+    # Security Headers
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+    
+    # Frontend Static Files
+    location / {
+        root /var/www/html;
+        index index.html index.htm;
+        try_files $uri $uri/ /index.html;
+    }
+    
+    # API Proxy to API Gateway
+    location /api/ {
+        proxy_pass http://api-gateway-internal:3000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</code></pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Container Management Section -->
+                    <section id="containers" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Container Management & Port Configuration</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">Service Port Exposure</h3>
+                            <p class="text-gray-600 mb-6">
+                                Each microservice exposes specific ports for different functionalities while maintaining 
+                                security through restricted communication paths.
+                            </p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-blue-900 mb-3">Frontend Service</h4>
+                                    <div class="space-y-2 text-blue-800 text-sm">
+                                        <div class="flex justify-between">
+                                            <span>HTTP:</span>
+                                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">80</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>HTTPS:</span>
+                                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">443</span>
+                                        </div>
+                                        <div class="mt-2 text-xs">
+                                            <p>• Nginx web server</p>
+                                            <p>• Static file serving</p>
+                                            <p>• SSL termination</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-green-900 mb-3">API Gateway</h4>
+                                    <div class="space-y-2 text-green-800 text-sm">
+                                        <div class="flex justify-between">
+                                            <span>HTTP API:</span>
+                                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">3000</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>Health Check:</span>
+                                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">3000/health</span>
+                                        </div>
+                                        <div class="mt-2 text-xs">
+                                            <p>• Request routing</p>
+                                            <p>• Authentication</p>
+                                            <p>• Rate limiting</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-purple-900 mb-3">Backend Service</h4>
+                                    <div class="space-y-2 text-purple-800 text-sm">
+                                        <div class="flex justify-between">
+                                            <span>API Server:</span>
+                                            <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">3001</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>Database:</span>
+                                            <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">5432</span>
+                                        </div>
+                                        <div class="mt-2 text-xs">
+                                            <p>• Business logic</p>
+                                            <p>• Database operations</p>
+                                            <p>• Internal API</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow">
+                            <h3 class="text-xl font-semibold mb-4">Communication Flow</h3>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <h4 class="font-medium mb-3">Restricted Communication Pattern</h4>
+                                <div class="space-y-3">
+                                    <div class="flex items-center space-x-4">
+                                        <span class="bg-blue-500 text-white text-xs font-medium px-2.5 py-0.5 rounded">Frontend</span>
+                                        <span class="text-gray-400">→</span>
+                                        <span class="bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded">API Gateway</span>
+                                        <span class="text-gray-600 text-sm">Only allowed communication</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-4">
+                                        <span class="bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded">API Gateway</span>
+                                        <span class="text-gray-400">→</span>
+                                        <span class="bg-purple-500 text-white text-xs font-medium px-2.5 py-0.5 rounded">Backend</span>
+                                        <span class="text-gray-600 text-sm">Only allowed communication</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-4">
+                                        <span class="bg-blue-500 text-white text-xs font-medium px-2.5 py-0.5 rounded">Frontend</span>
+                                        <span class="text-red-500">✕</span>
+                                        <span class="bg-purple-500 text-white text-xs font-medium px-2.5 py-0.5 rounded">Backend</span>
+                                        <span class="text-red-500 text-sm">Direct access blocked</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Debugging Process Section -->
+                    <section id="debugging" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Debugging Process & Container Troubleshooting</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">Container Debugging Methodology</h3>
+                            <p class="text-gray-600 mb-6">
+                                When the application wasn't coming up properly, we implemented a systematic debugging approach 
+                                by accessing each container individually to identify and resolve issues.
+                            </p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-red-900 mb-3">Common Issues Encountered</h4>
+                                    <ul class="space-y-2 text-red-800 text-sm">
+                                        <li>• Database connection timeouts</li>
+                                        <li>• Environment variable mismatches</li>
+                                        <li>• Port binding conflicts</li>
+                                        <li>• Container startup dependencies</li>
+                                        <li>• Network connectivity problems</li>
+                                        <li>• SSL certificate issues</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-green-900 mb-3">Debugging Tools Used</h4>
+                                    <ul class="space-y-2 text-green-800 text-sm">
+                                        <li>• Docker exec for container access</li>
+                                        <li>• Container logs analysis</li>
+                                        <li>• Network connectivity testing</li>
+                                        <li>• Process monitoring</li>
+                                        <li>• Configuration validation</li>
+                                        <li>• Health check endpoints</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow">
+                            <h3 class="text-xl font-semibold mb-4">Step-by-Step Debugging Process</h3>
+                            
+                            <div class="space-y-6">
+                                <div class="border-l-4 border-blue-500 pl-6">
+                                    <h4 class="text-lg font-medium mb-2">Step 1: Container Access and Inspection</h4>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <pre class="text-sm"><code># Check running containers
+docker ps -a
+
+# Access frontend container
+docker exec -it frontend-container /bin/bash
+
+# Check Nginx configuration
+nginx -t
+cat /etc/nginx/sites-available/default
+
+# Verify SSL certificates
+ls -la /etc/letsencrypt/live/yourdomain.com/
+
+# Check Nginx error logs
+tail -f /var/log/nginx/error.log</code></pre>
+                                    </div>
+                                    <p class="text-gray-600 text-sm mt-2">
+                                        First, we accessed the frontend container to verify Nginx configuration and SSL certificate setup.
+                                    </p>
+                                </div>
+
+                                <div class="border-l-4 border-green-500 pl-6">
+                                    <h4 class="text-lg font-medium mb-2">Step 2: API Gateway Diagnostics</h4>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <pre class="text-sm"><code># Access API Gateway container
+docker exec -it apigateway-container /bin/bash
+
+# Check application logs
+npm run logs
+tail -f /app/logs/application.log
+
+# Test internal connectivity
+curl -i http://localhost:3000/health
+curl -i http://backend:3001/api/health
+
+# Verify environment variables
+env | grep -E "(DATABASE|BACKEND|PORT)"
+
+# Check process status
+ps aux | grep node</code></pre>
+                                    </div>
+                                    <p class="text-gray-600 text-sm mt-2">
+                                        We diagnosed API Gateway connectivity issues and verified environment configurations.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Database Dependencies Section -->
+                    <section id="database" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Database Dependencies & Container Orchestration</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">PostgreSQL Dependency Management</h3>
+                            <p class="text-gray-600 mb-6">
+                                The backend containers are configured with proper dependency management to ensure PostgreSQL 
+                                database is fully ready before application startup.
+                            </p>
+                            
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                                <div class="flex items-start space-x-3">
+                                    <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div>
+                                        <p class="text-blue-800">
+                                            <strong>Critical Issue:</strong> Backend containers literally wait for PostgreSQL database to start and get connected 
+                                            before launching application services. This solved initial startup failures where services would 
+                                            attempt to connect to unavailable databases.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-blue-900 mb-3">Connection Strategy</h4>
+                                    <ul class="text-blue-800 text-sm space-y-1">
+                                        <li>• Wait for PostgreSQL port 5432</li>
+                                        <li>• Retry connection every 5 seconds</li>
+                                        <li>• Maximum 30 retry attempts</li>
+                                        <li>• Health check verification</li>
+                                        <li>• Graceful failure handling</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-green-900 mb-3">Database Configuration</h4>
+                                    <ul class="text-green-800 text-sm space-y-1">
+                                        <li>• Host: postgres (Docker network)</li>
+                                        <li>• Port: 5432</li>
+                                        <li>• Connection pooling enabled</li>
+                                        <li>• SSL mode: prefer</li>
+                                        <li>• Timeout: 30 seconds</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <pre class="text-sm"><code>#!/bin/bash
+# Database wait script implemented in backend containers
+
+echo "Waiting for PostgreSQL database..."
+
+until pg_isready -h postgres -p 5432 -U $DB_USER; do
+  echo "PostgreSQL is unavailable - sleeping for 5 seconds"
+  sleep 5
+  ((attempts++))
+  
+  if [ $attempts -eq 30 ]; then
+    echo "PostgreSQL connection failed after 30 attempts"
+    exit 1
+  fi
+done
+
+echo "PostgreSQL is ready - starting application"
+exec "$@"</code></pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Game Application Section -->
+                    <section id="game-app" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Transcendence Game Application</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">Game Video Demonstration</h3>
+                            
+                            <div class="mb-6">
+                                <video 
+                                    controls 
+                                    autoplay
+                                    loop
+                                    muted
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                    style="max-height: 500px;"
+                                >
+                                    <source src="attached_assets/GAME VIDEO.mp4" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Live gameplay demonstration of the Transcendence Pong game showing real-time multiplayer functionality and interactive gameplay mechanics.
+                                </p>
+                            </div>
+
+                            <h3 class="text-xl font-semibold mb-4">Game Interface & Features</h3>
+                            
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/Game startup section.png" 
+                                    alt="Game Startup Section showing CREATE GAME and JOIN GAME options" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Game startup interface providing options to create new games or join existing tournaments with real-time multiplayer capabilities.
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/Players List.png" 
+                                    alt="Players List showing multiplayer game setup" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Multiplayer game lobby showing player alias input fields for up to 4 players with start game functionality.
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/GAME PROFILE SECTION.png" 
+                                    alt="Game Profile Section showing user statistics" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    User profile interface displaying player statistics, match history, win/loss records, and account management features.
+                                </p>
+                            </div>
+
+                            <p class="text-gray-600 mb-6">
+                                The Transcendence game is an advanced version of the classic Pong game, featuring real-time multiplayer 
+                                capabilities, user authentication, tournament systems, and comprehensive player statistics tracking.
+                            </p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-indigo-900 mb-3">Core Features</h4>
+                                    <ul class="text-indigo-800 text-sm space-y-1">
+                                        <li>• Real-time multiplayer Pong gameplay</li>
+                                        <li>• Tournament creation and management</li>
+                                        <li>• Player ranking and statistics</li>
+                                        <li>• Friend system and social features</li>
+                                        <li>• Match history tracking</li>
+                                        <li>• Local and online game modes</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-pink-50 border border-pink-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-pink-900 mb-3">Technical Implementation</h4>
+                                    <ul class="text-pink-800 text-sm space-y-1">
+                                        <li>• WebSocket real-time communication</li>
+                                        <li>• Canvas-based game rendering</li>
+                                        <li>• RESTful API for game data</li>
+                                        <li>• PostgreSQL for persistent storage</li>
+                                        <li>• JWT-based authentication</li>
+                                        <li>• Responsive web design</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Authentication Section -->
+                    <section id="authentication" class="mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Authentication & Two-Factor Authentication</h2>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6 card-shadow mb-8">
+                            <h3 class="text-xl font-semibold mb-4">Secure User Authentication System</h3>
+                            
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/Transcendence Login Page.png" 
+                                    alt="Transcendence Login Page interface" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Clean and modern login interface for the Transcendence gaming platform with secure authentication flow.
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/Transcendence 2FA Code.png" 
+                                    alt="Two-Factor Authentication Code Entry" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Two-factor authentication interface requiring email verification code for enhanced account security.
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <img 
+                                    src="attached_assets/Check MailBox!.png" 
+                                    alt="Email Verification Prompt" 
+                                    class="rounded-lg border border-gray-200 w-full shadow-sm"
+                                />
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Email verification step prompting users to check their mailbox for the authentication code during login process.
+                                </p>
+                            </div>
+
+                            <p class="text-gray-600 mb-6">
+                                The authentication system implements multi-layer security with email-based two-factor authentication, 
+                                ensuring robust protection against unauthorized access while maintaining user-friendly experience.
+                            </p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-green-900 mb-3">Security Features</h4>
+                                    <ul class="text-green-800 text-sm space-y-1">
+                                        <li>• Email-based 2FA</li>
+                                        <li>• JWT token management</li>
+                                        <li>• Session timeout</li>
+                                        <li>• Password encryption</li>
+                                        <li>• Rate limiting</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-blue-900 mb-3">User Experience</h4>
+                                    <ul class="text-blue-800 text-sm space-y-1">
+                                        <li>• Clean interface design</li>
+                                        <li>• Clear verification steps</li>
+                                        <li>• Email notifications</li>
+                                        <li>• Mobile responsive</li>
+                                        <li>• Accessibility support</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-purple-900 mb-3">Integration</h4>
+                                    <ul class="text-purple-800 text-sm space-y-1">
+                                        <li>• API Gateway routing</li>
+                                        <li>• Database user management</li>
+                                        <li>• Email service integration</li>
+                                        <li>• Frontend state management</li>
+                                        <li>• Backend validation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript for interactivity -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+                
+                // Close mobile menu if open
+                const mobileMenu = document.getElementById('mobile-menu');
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Active section highlighting
+        const observerOptions = {
+            rootMargin: '-20% 0px -70% 0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Remove active class from all sidebar links
+                    document.querySelectorAll('aside a').forEach(link => {
+                        link.classList.remove('bg-blue-600', 'text-white');
+                        link.classList.add('text-gray-600', 'hover:bg-white', 'hover:text-gray-900');
+                    });
+                    
+                    // Add active class to current section link
+                    const activeLink = document.querySelector(`aside a[href="#${entry.target.id}"]`);
+                    if (activeLink) {
+                        activeLink.classList.add('bg-blue-600', 'text-white');
+                        activeLink.classList.remove('text-gray-600', 'hover:bg-white', 'hover:text-gray-900');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('section[id]').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
